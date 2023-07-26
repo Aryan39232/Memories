@@ -100,3 +100,6 @@ const Post = ({ post, setCurrentId }) => {
 };
 
 export default Post;
+
+
+/// MY Name is Aryan 
