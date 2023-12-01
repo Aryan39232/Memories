@@ -1,16 +1,10 @@
-<h1 align="center">  &nbsp; Memories App  </h1>
-
-  <img src=./client/public/memories-readme.png>
+<h1 align="center"> Memories App  </h1>
 
 <h1></h1>
 
 > Built with MERN stack (MongoDB, Express, React, and Node).
 > Memories App, where you can post interesting events that happened in your lives
 
-
-
-
-### <h2 align="center">  💫💫💫  &nbsp; [Live Demo](https://hao-memories-mern-app.netlify.app/) 💫💫💫  </h2>
 
 
 
