@@ -65,7 +65,6 @@
 - CRUD operations
 - Authentication system
 - Storing user data
-- OOP (Object Oriented Programming)
 
 ## 💹 &nbsp; Technologies
 
