@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000' });
+const API = axios.create({ baseURL: 'https://memories-5kr5ijxmz-aryan-patels-projects-a0a4ed79.vercel.app' });
 
 API.interceptors.request.use((req) => {
   if (localStorage.getItem('profile')) {
