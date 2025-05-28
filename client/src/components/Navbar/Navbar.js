@@ -39,7 +39,7 @@ const Navbar = () => {
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
       <Link to="/" className={classes.brandContainer}>
-        <img component={Link} to="/" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Matplotlib_logo.svg/512px-Matplotlib_logo.svg.png" alt="icon" height="45px" />
+        <img component={Link} to="/" src="https://firebase.google.com/downloads/brand-guidelines/PNG/logo-vertical.png" alt="icon" height="45px" />
         <img className={classes.image}  src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png"
  alt="icon" height="40px" />
         
