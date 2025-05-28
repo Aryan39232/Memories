@@ -4,8 +4,8 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import decode from 'jwt-decode';
 
-// import memoriesLogo from 'C:/Users/aryan/Desktop/hello/Project/Youtube/client/src/images/memoriesLogo.png';
-// import memoriesText from 'C:/Users/aryan/Desktop/hello/Project/Youtube/client/src/images/MemoriesText.png';
+import memoriesLogo from '../../images/memoriesLogo.png';
+import memoriesText from '../../images/MemoriesText.png';
 import * as actionType from '../../constants/actionTypes';
 import useStyles from './styles';
 
@@ -39,9 +39,8 @@ const Navbar = () => {
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
       <Link to="/" className={classes.brandContainer}>
-        <img component={Link} to="/" src="https://firebase.google.com/downloads/brand-guidelines/PNG/logo-vertical.png" alt="icon" height="45px" />
-        <img className={classes.image}  src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png"
- alt="icon" height="40px" />
+        <img component={Link} to="/" src={memoriesLogo} alt="icon" height="45px" />
+        <img className={classes.image}  src={memoriesText} alt="icon" height="40px" />
         
       </Link>
       <Toolbar className={classes.toolbar}>

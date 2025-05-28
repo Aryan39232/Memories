@@ -8,6 +8,8 @@ const secret = 'test';
 export const signin = async (req, res) => {
   const { email, password } = req.body;
 
+  console.log(req.body);
+
   try {
     const oldUser = await UserModal.findOne({ email });
 
@@ -27,6 +29,8 @@ export const signin = async (req, res) => {
 
 export const signup = async (req, res) => {
   const { email, password, firstName, lastName } = req.body;
+
+  
 
   try {
     const oldUser = await UserModal.findOne({ email });
