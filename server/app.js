@@ -6,16 +6,22 @@ import dotenv  from 'dotenv';
 
 import postRoutes from './routes/posts.js'
 import userRoutes from './routes/users.js'
+
+
 const app = express();
 dotenv.config();
 
 app.use(bodyParser.json({ extended : true}));
 app.use(bodyParser.urlencoded({ extended : true}));
-app.use(cors());
+
+app.use(cors({
+  origin: 'https://memories-zy45.vercel.app',
+  credentials: true 
+}));
 
 app.use('/posts' , postRoutes)
 app.use('/user' , userRoutes)
-//done
+
 
 const CONNECTION_URL = process.env.CONNECTION_URL;
 const PORT = process.env.PORT;
