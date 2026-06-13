@@ -28,6 +28,7 @@ const Profile = () => {
       return;
     }
     dispatch(getPostsByCreator(user.result.name));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!user?.result) return null;

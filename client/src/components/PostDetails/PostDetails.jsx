@@ -19,11 +19,11 @@ const Post = () => {
   const classes = useStyles();
   const { id } = useParams();
 
-  useEffect(() => { dispatch(getPost(id)); }, [id]);
+  useEffect(() => { dispatch(getPost(id)); }, [id, dispatch]);
 
   useEffect(() => {
     if (post) dispatch(getPostsBySearch({ search: 'none', tags: post?.tags.join(',') }));
-  }, [post]);
+  }, [post, dispatch]);
 
   const openPost = (_id) => history.push(`/posts/${_id}`);
 

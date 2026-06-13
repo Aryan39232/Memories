@@ -19,7 +19,8 @@ const CreatorOrTag = () => {
     } else {
       dispatch(getPostsByCreator(name));
     }
-  }, [name]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, isTag]);
 
   return (
     <div className="mem-rise" style={{ padding: '8px 0 40px' }}>
