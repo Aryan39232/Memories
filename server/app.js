@@ -13,12 +13,17 @@ dotenv.config();
 const app = express();
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
-app.use(bodyParser.json({ limit: "1mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "1mb", extended: true }));
+app.use(bodyParser.json({ limit: "30mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+
+const allowedOrigins = [
+  process.env.CLIENT_URL,        // set this in Render env vars to your Vercel URL
+  'http://localhost:3000',
+].filter(Boolean);
 
 app.use(
   cors({
-    origin: ["https://memories-zy45.vercel.app", "http://localhost:3000"],
+    origin: allowedOrigins,
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: "Content-Type,Authorization",
