@@ -17,7 +17,8 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
 const allowedOrigins = [
-  process.env.CLIENT_URL,        // set this in Render env vars to your Vercel URL
+  process.env.CLIENT_URL,
+  'https://memories-rho-pink.vercel.app',
   'http://localhost:3000',
 ].filter(Boolean);
 
