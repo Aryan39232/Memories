@@ -1,136 +1,163 @@
-import express from 'express';
 import mongoose from 'mongoose';
 
 import PostMessage from '../models/postMessage.js';
 
-const router = express.Router();
-
 export const getPosts = async (req, res) => {
-    const { page } = req.query;
-    
-    try {
-        const LIMIT = 8;
-        const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
-    
-        const total = await PostMessage.countDocuments({});
-        const posts = await PostMessage.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
+  const { page } = req.query;
 
-        res.json({ data: posts, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT)});
-    } catch (error) {    
-        res.status(404).json({ message: error.message });
-    }
-}
+  try {
+    const LIMIT = 8;
+    const startIndex = (Number(page) - 1) * LIMIT;
+
+    const total = await PostMessage.countDocuments({});
+    const posts = await PostMessage.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
+
+    res.json({ data: posts, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT) });
+  } catch (error) {
+    res.status(500).json({ message: 'Could not load memories. Please try again.' });
+  }
+};
 
 export const getPostsBySearch = async (req, res) => {
-    const { searchQuery, tags } = req.query;
+  const { searchQuery, tags } = req.query;
 
-    try {
-        const title = new RegExp(searchQuery, "i");
+  try {
+    const tagList = tags ? tags.split(',').filter(Boolean) : [];
+    const hasTitle = searchQuery && searchQuery !== 'none';
 
-        const posts = await PostMessage.find({ $or: [ { title }, { tags: { $in: tags.split(',') } } ]});
+    const orConditions = [];
+    if (hasTitle) orConditions.push({ title: new RegExp(searchQuery, 'i') });
+    if (tagList.length) orConditions.push({ tags: { $in: tagList } });
 
-        res.json({ data: posts });
-    } catch (error) {    
-        res.status(404).json({ message: error.message });
-    }
-}
+    const posts = orConditions.length
+      ? await PostMessage.find({ $or: orConditions })
+      : await PostMessage.find().sort({ _id: -1 }).limit(20);
+
+    res.json({ data: posts });
+  } catch (error) {
+    res.status(500).json({ message: 'Search failed. Please try again.' });
+  }
+};
 
 export const getPostsByCreator = async (req, res) => {
-    const { name } = req.query;
+  const { name } = req.query;
 
-    try {
-        const posts = await PostMessage.find({ name });
+  try {
+    const posts = await PostMessage.find({ name });
 
-        res.json({ data: posts });
-    } catch (error) {    
-        res.status(404).json({ message: error.message });
-    }
-}
+    res.json({ data: posts });
+  } catch (error) {
+    res.status(500).json({ message: 'Could not load these memories. Please try again.' });
+  }
+};
 
-export const getPost = async (req, res) => { 
-    const { id } = req.params;
+export const getPost = async (req, res) => {
+  const { id } = req.params;
 
-    try {
-        const post = await PostMessage.findById(id);
-        
-        res.status(200).json(post);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-}
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ message: 'Memory not found.' });
+
+    const post = await PostMessage.findById(id);
+    if (!post) return res.status(404).json({ message: 'Memory not found.' });
+
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json({ message: 'Could not load this memory. Please try again.' });
+  }
+};
 
 export const createPost = async (req, res) => {
-    const post = req.body;
+  const post = req.body;
 
-    const newPostMessage = new PostMessage({ ...post, creator: req.userId, createdAt: new Date().toISOString() })
-
-    try {
-        await newPostMessage.save();
-
-        res.status(201).json(newPostMessage);
-    } catch (error) {
-        res.status(409).json({ message: error.message });
+  try {
+    if (!post?.title || !post?.message) {
+      return res.status(400).json({ message: 'A title and a message are required.' });
     }
-}
+
+    const newPostMessage = new PostMessage({ ...post, creator: req.userId, createdAt: new Date().toISOString() });
+    await newPostMessage.save();
+
+    res.status(201).json(newPostMessage);
+  } catch (error) {
+    res.status(409).json({ message: 'Could not save your memory. Please try again.' });
+  }
+};
 
 export const updatePost = async (req, res) => {
-    const { id } = req.params;
-    const { title, message, creator, selectedFile, tags } = req.body;
-    
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+  const { id } = req.params;
+  const { title, message, creator, selectedFile, tags } = req.body;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ message: 'Memory not found.' });
+
+    const existing = await PostMessage.findById(id);
+    if (!existing) return res.status(404).json({ message: 'Memory not found.' });
 
     const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
+    const result = await PostMessage.findByIdAndUpdate(id, updatedPost, { new: true });
 
-    await PostMessage.findByIdAndUpdate(id, updatedPost, { new: true });
-
-    res.json(updatedPost);
-}
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Could not update this memory. Please try again.' });
+  }
+};
 
 export const deletePost = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ message: 'Memory not found.' });
 
-    await PostMessage.findByIdAndRemove(id);
+    const deleted = await PostMessage.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ message: 'Memory not found.' });
 
-    res.json({ message: "Post deleted successfully." });
-}
+    res.json({ message: 'Post deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Could not delete this memory. Please try again.' });
+  }
+};
 
 export const likePost = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    if (!req.userId) {
-        return res.json({ message: "Unauthenticated" });
-      }
+  try {
+    if (!req.userId) return res.status(401).json({ message: 'Please sign in to like memories.' });
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ message: 'Memory not found.' });
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
-    
     const post = await PostMessage.findById(id);
+    if (!post) return res.status(404).json({ message: 'Memory not found.' });
 
-    const index = post.likes.findIndex((id) => id ===String(req.userId));
-
+    const index = post.likes.findIndex((uid) => uid === String(req.userId));
     if (index === -1) {
       post.likes.push(req.userId);
     } else {
-      post.likes = post.likes.filter((id) => id !== String(req.userId));
+      post.likes = post.likes.filter((uid) => uid !== String(req.userId));
     }
 
     const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
 
     res.status(200).json(updatedPost);
-}
+  } catch (error) {
+    res.status(500).json({ message: 'Could not update the like. Please try again.' });
+  }
+};
 
 export const commentPost = async (req, res) => {
-    const { id } = req.params;
-    const { value } = req.body;
+  const { id } = req.params;
+  const { value } = req.body;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ message: 'Memory not found.' });
+    if (!value || !String(value).trim()) return res.status(400).json({ message: 'A comment cannot be empty.' });
 
     const post = await PostMessage.findById(id);
+    if (!post) return res.status(404).json({ message: 'Memory not found.' });
 
     post.comments.push(value);
-
     const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
 
     res.json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: 'Could not add your comment. Please try again.' });
+  }
 };
-
-export default router;

@@ -1,0 +1,32 @@
+import { makeStyles } from '@material-ui/core/styles';
+
+export default makeStyles((theme) => ({
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 24,
+    padding: '28px 32px',
+    borderRadius: 22,
+    marginBottom: 28,
+    color: '#fff',
+    background: 'linear-gradient(120deg, #4F36A0 0%, #6A4CC6 55%, #8E6FE0 100%)',
+    boxShadow: '0 16px 44px rgba(91,63,168,0.28)',
+    [theme.breakpoints.down('xs')]: { flexDirection: 'column', textAlign: 'center' },
+  },
+  avatar: { width: 84, height: 84, fontSize: 34, fontWeight: 700, background: 'rgba(255,255,255,0.2)', color: '#fff' },
+  headerText: { minWidth: 0 },
+  eyebrow: { color: 'rgba(255,255,255,0.85)', letterSpacing: '0.16em' },
+  name: { color: '#fff', lineHeight: 1.1 },
+  email: { color: 'rgba(255,255,255,0.9)', marginTop: 2 },
+  chips: { display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap', [theme.breakpoints.down('xs')]: { justifyContent: 'center' } },
+  chip: { background: 'rgba(255,255,255,0.18)', color: '#fff', fontWeight: 600 },
+  sectionTitle: { marginBottom: 8 },
+  divider: { marginBottom: 24 },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: 24,
+    [theme.breakpoints.down('xs')]: { gridTemplateColumns: '1fr' },
+  },
+  empty: { padding: theme.spacing(6, 4), textAlign: 'center', borderRadius: 18 },
+}));

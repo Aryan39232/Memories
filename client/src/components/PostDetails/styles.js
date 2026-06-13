@@ -1,39 +1,79 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles((theme) => ({
-  media: {
-    borderRadius: '20px',
-    objectFit: 'cover',
-    width: '100%',
-    maxHeight: '600px',
-
+  backLink: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    textDecoration: 'none',
+    color: theme.palette.text.secondary,
+    fontWeight: 600,
+    marginBottom: 16,
+    '&:hover': { color: theme.palette.primary.main },
   },
   card: {
     display: 'flex',
     width: '100%',
-    [theme.breakpoints.down('sm')]: {
-      flexWrap: 'wrap',
-      flexDirection: 'column',
-    },
+    gap: 32,
+    [theme.breakpoints.down('sm')]: { flexWrap: 'wrap', flexDirection: 'column' },
   },
-  section: {
-    borderRadius: '20px',
-    margin: '10px',
-    flex: 1,
+  section: { borderRadius: '18px', flex: 1, minWidth: 0 },
+  title: { fontSize: 'clamp(2rem, 4vw, 3rem)', lineHeight: 1.08, marginBottom: 14 },
+  tagRow: { display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 },
+  tag: {
+    fontWeight: 600,
+    background: 'rgba(91,63,168,0.10)',
+    color: theme.palette.primary.dark,
+    '&:hover': { background: 'rgba(91,63,168,0.18)' },
   },
+  message: { fontSize: '1.08rem', lineHeight: 1.7, color: theme.palette.text.primary, marginBottom: 26 },
+  metaRow: { display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', marginBottom: 8 },
+  avatar: { backgroundColor: theme.palette.primary.main, color: '#fff', fontWeight: 700, width: 44, height: 44 },
+  metaName: { fontWeight: 700 },
+  metaNameLink: { color: theme.palette.primary.main, textDecoration: 'none' },
+  metaDate: { color: theme.palette.text.secondary, fontSize: 14 },
+  likeChip: { fontWeight: 600, color: theme.palette.secondary.dark, background: 'rgba(255,107,107,0.12)' },
   imageSection: {
-    marginLeft: '20px',
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: 0,
-    },
+    flex: 1,
+    [theme.breakpoints.down('sm')]: { marginTop: 8 },
   },
-  recommendedPosts: {
+  media: {
+    borderRadius: '18px',
+    objectFit: 'cover',
+    width: '100%',
+    maxHeight: '560px',
+    boxShadow: '0 18px 50px rgba(31,27,46,0.14)',
+  },
+  commentsBlock: { marginTop: 8 },
+  commentsHeading: { marginBottom: 14 },
+  commentsOuterContainer: {
     display: 'flex',
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
-    },
+    justifyContent: 'space-between',
+    gap: 28,
+    [theme.breakpoints.down('xs')]: { flexDirection: 'column' },
   },
+  commentsInnerContainer: { maxHeight: '220px', overflowY: 'auto', flex: 1, paddingRight: 8 },
+  commentItem: {
+    background: 'rgba(31,27,46,0.035)',
+    borderRadius: 12,
+    padding: '10px 14px',
+    marginBottom: 10,
+  },
+  commentAuthor: { fontWeight: 700, color: theme.palette.primary.dark },
+  emptyComments: { color: theme.palette.text.secondary, fontStyle: 'italic' },
+  recommended: { marginTop: 36 },
+  recommendedPosts: { display: 'flex', flexWrap: 'wrap', gap: 8 },
+  recCard: {
+    cursor: 'pointer',
+    width: 200,
+    flexShrink: 0,
+    transition: 'transform 0.15s ease',
+    '&:hover': { transform: 'translateY(-4px)' },
+  },
+  recImg: { borderRadius: 12, width: '100%', height: 130, objectFit: 'cover', display: 'block', marginBottom: 8 },
+  recTitle: { fontWeight: 700, lineHeight: 1.3, marginBottom: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' },
   loadingPaper: {
-    display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', borderRadius: '15px', height: '39vh',
+    display: 'flex', justifyContent: 'center', alignItems: 'center',
+    padding: '20px', borderRadius: '18px', height: '39vh',
   },
 }));
