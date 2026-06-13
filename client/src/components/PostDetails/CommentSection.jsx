@@ -30,37 +30,62 @@ const CommentSection = ({ post }) => {
 
   return (
     <div>
-      <Typography variant="h6" className={classes.commentsHeading}>Comments</Typography>
-      <div className={classes.commentsOuterContainer}>
-        <div className={classes.commentsInnerContainer}>
-          {comments?.length ? comments.map((c, i) => {
-            const author = c.split(': ')[0];
-            const text = c.split(': ').slice(1).join(': ');
-            return (
-              <div key={i} className={classes.commentItem}>
-                <Typography variant="subtitle1">
-                  <span className={classes.commentAuthor}>{author}</span>
-                  {text ? `  ${text}` : ''}
-                </Typography>
+      <Typography variant="h6" className={classes.commentsHeading}>
+        Comments{comments?.length ? ` (${comments.length})` : ''}
+      </Typography>
+
+      {/* ── Comment list ── */}
+      <div className={classes.commentsList}>
+        {comments?.length ? comments.map((c, i) => {
+          const author = c.split(': ')[0];
+          const text = c.split(': ').slice(1).join(': ');
+          return (
+            <div key={i} className={classes.commentItem}>
+              <div className={classes.commentAvatar}>{author?.charAt(0)}</div>
+              <div className={classes.commentBody}>
+                <Typography className={classes.commentAuthor}>{author}</Typography>
+                <Typography variant="body2" className={classes.commentText}>{text}</Typography>
               </div>
-            );
-          }) : (
-            <Typography variant="body2" className={classes.emptyComments}>
-              No comments yet — be the first to add the story behind this moment.
-            </Typography>
-          )}
-          <div ref={commentsRef} />
-        </div>
-        {user?.result?.name && (
-          <div style={{ width: '70%' }}>
-            <Typography gutterBottom variant="h6">Write a comment</Typography>
-            <TextField fullWidth rows={4} variant="outlined" label="Comment" multiline value={comment} onChange={(e) => setComment(e.target.value)} />
-            <Button style={{ marginTop: '10px' }} fullWidth disabled={!comment.length || posting} color="primary" variant="contained" onClick={handleComment} disableElevation>
-              {posting ? <CircularProgress size={22} color="inherit" /> : 'Comment'}
+            </div>
+          );
+        }) : (
+          <Typography variant="body2" className={classes.emptyComments}>
+            No comments yet — be the first to add the story behind this moment.
+          </Typography>
+        )}
+        <div ref={commentsRef} />
+      </div>
+
+      {/* ── Write a comment ── */}
+      {user?.result?.name && (
+        <div className={classes.writeComment}>
+          <div className={classes.commentAvatar}>{user.result.name?.charAt(0)}</div>
+          <div style={{ flex: 1 }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Add a comment…"
+              multiline
+              rows={3}
+              size="small"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <Button
+              style={{ marginTop: 8 }}
+              fullWidth
+              disabled={!comment.length || posting}
+              color="primary"
+              variant="contained"
+              onClick={handleComment}
+              disableElevation
+              size="small"
+            >
+              {posting ? <CircularProgress size={20} color="inherit" /> : 'Post comment'}
             </Button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
