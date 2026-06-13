@@ -8,7 +8,7 @@ import ChipInput from 'material-ui-chip-input';
 import { createPost, updatePost } from '../../actions/posts';
 import useStyles from './styles';
 
-const Form = ({ currentId, setCurrentId }) => {
+const Form = ({ currentId, setCurrentId, embedded = false }) => {
   const [postData, setPostData] = useState({ title: '', message: '', tags: [], selectedFile: '' });
   const [loading, setLoading] = useState(false);
   const post = useSelector((state) => (currentId ? state.posts.posts.find((p) => p._id === currentId) : null));
@@ -46,50 +46,47 @@ const Form = ({ currentId, setCurrentId }) => {
   };
 
   if (!user?.result?.name) {
-    return (
-      <Paper className={classes.paper} elevation={6}>
-        <Typography variant="h6" align="center">
-          Sign in to create your own memories and like the ones you love.
-        </Typography>
-      </Paper>
-    );
+    const msg = <Typography variant="h6" align="center">Sign in to create your own memories and like the ones you love.</Typography>;
+    return embedded ? msg : <Paper className={classes.paper} elevation={6}>{msg}</Paper>;
   }
 
   // Use functional updates to avoid stale-closure issues with rapid tag changes.
   const handleAddChip = (tag) => setPostData((prev) => ({ ...prev, tags: [...prev.tags, tag] }));
   const handleDeleteChip = (chipToDelete) => setPostData((prev) => ({ ...prev, tags: prev.tags.filter((t) => t !== chipToDelete) }));
 
-  return (
-    <Paper className={classes.paper} elevation={6}>
-      <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
+  const formBody = (
+    <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
+      {!embedded && (
         <Typography variant="h6" className={classes.heading}>
           {currentId ? `Editing "${post?.title}"` : 'Create a memory'}
         </Typography>
-        <TextField name="title" variant="outlined" label="Title" fullWidth value={postData.title} onChange={(e) => setPostData((prev) => ({ ...prev, title: e.target.value }))} />
-        <TextField name="message" variant="outlined" label="Message" fullWidth multiline rows={4} value={postData.message} onChange={(e) => setPostData((prev) => ({ ...prev, message: e.target.value }))} />
-        <div style={{ padding: '5px 0', width: '94%' }}>
-          <ChipInput
-            name="tags"
-            variant="outlined"
-            label="Tags (press Enter to add)"
-            fullWidth
-            value={postData.tags}
-            onAdd={handleAddChip}
-            onDelete={handleDeleteChip}
-          />
-        </div>
-        <div className={classes.fileInput}>
-          <FileBase type="file" multiple={false} onDone={({ base64 }) => setPostData((prev) => ({ ...prev, selectedFile: base64 }))} />
-        </div>
-        <Button className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth disabled={loading} disableElevation>
-          {loading ? <CircularProgress size={24} color="inherit" /> : (currentId ? 'Save changes' : 'Share memory')}
-        </Button>
-        <Button variant="text" color="secondary" size="small" onClick={clear} fullWidth disabled={loading}>
-          Clear
-        </Button>
-      </form>
-    </Paper>
+      )}
+      <TextField name="title" variant="outlined" label="Title" fullWidth value={postData.title} onChange={(e) => setPostData((prev) => ({ ...prev, title: e.target.value }))} />
+      <TextField name="message" variant="outlined" label="Message" fullWidth multiline rows={4} value={postData.message} onChange={(e) => setPostData((prev) => ({ ...prev, message: e.target.value }))} />
+      <div style={{ padding: '5px 0', width: '94%' }}>
+        <ChipInput
+          name="tags"
+          variant="outlined"
+          label="Tags (press Enter to add)"
+          fullWidth
+          value={postData.tags}
+          onAdd={handleAddChip}
+          onDelete={handleDeleteChip}
+        />
+      </div>
+      <div className={classes.fileInput}>
+        <FileBase type="file" multiple={false} onDone={({ base64 }) => setPostData((prev) => ({ ...prev, selectedFile: base64 }))} />
+      </div>
+      <Button className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth disabled={loading} disableElevation>
+        {loading ? <CircularProgress size={24} color="inherit" /> : (currentId ? 'Save changes' : 'Share memory')}
+      </Button>
+      <Button variant="text" color="secondary" size="small" onClick={clear} fullWidth disabled={loading}>
+        {embedded ? 'Cancel' : 'Clear'}
+      </Button>
+    </form>
   );
+
+  return embedded ? formBody : <Paper className={classes.paper} elevation={6}>{formBody}</Paper>;
 };
 
 export default Form;

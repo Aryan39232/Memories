@@ -65,6 +65,9 @@ export default makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     fontWeight: 600,
+    textDecoration: 'none',
+    color: 'inherit',
+    '&:hover': { color: theme.palette.primary.main },
   },
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),

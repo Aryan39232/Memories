@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { Container, Paper, Typography, Avatar, Grow, Divider, Chip } from '@material-ui/core';
+import { Container, Paper, Typography, Avatar, Grow, Divider, Chip, Button } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import * as actionType from '../../constants/actionTypes';
 
 import { getPostsByCreator } from '../../actions/posts';
 import Post from '../Posts/Post/post';
@@ -14,6 +16,11 @@ const Profile = () => {
   const history = useHistory();
   const { posts, isLoading } = useSelector((state) => state.posts);
   const user = JSON.parse(localStorage.getItem('profile'));
+
+  const logout = () => {
+    dispatch({ type: actionType.LOGOUT });
+    history.push('/auth');
+  };
 
   useEffect(() => {
     if (!user?.result) {
@@ -42,6 +49,14 @@ const Profile = () => {
               <Chip className={classes.chip} label={`${totalLikes} ${totalLikes === 1 ? 'like' : 'likes'} received`} />
             </div>
           </div>
+          <Button
+            className={classes.logoutBtn}
+            variant="outlined"
+            startIcon={<ExitToAppIcon />}
+            onClick={logout}
+          >
+            Sign out
+          </Button>
         </Paper>
 
         <Typography variant="h5" className={classes.sectionTitle}>My memories</Typography>

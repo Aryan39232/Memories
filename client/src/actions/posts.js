@@ -8,7 +8,7 @@ export const getPost = (id) => async (dispatch) => {
     const { data } = await api.fetchPost(id);
     dispatch({ type: FETCH_POST, payload: { post: data } });
   } catch (error) {
-    console.log(error);
+    notify('Could not load this memory. Please try again.', 'error');
   } finally {
     dispatch({ type: END_LOADING });
   }
@@ -20,7 +20,7 @@ export const getPosts = (page) => async (dispatch) => {
     const { data: { data, currentPage, numberOfPages } } = await api.fetchPosts(page);
     dispatch({ type: FETCH_ALL, payload: { data, currentPage, numberOfPages } });
   } catch (error) {
-    console.log(error);
+    notify('Could not load memories. Please check your connection.', 'error');
   } finally {
     dispatch({ type: END_LOADING });
   }
@@ -32,7 +32,7 @@ export const getPostsByCreator = (name) => async (dispatch) => {
     const { data: { data } } = await api.fetchPostsByCreator(name);
     dispatch({ type: FETCH_BY_CREATOR, payload: { data } });
   } catch (error) {
-    console.log(error);
+    notify('Could not load your memories. Please try again.', 'error');
   } finally {
     dispatch({ type: END_LOADING });
   }
@@ -44,7 +44,7 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
     const { data: { data } } = await api.fetchPostsBySearch(searchQuery);
     dispatch({ type: FETCH_BY_SEARCH, payload: { data } });
   } catch (error) {
-    console.log(error);
+    notify('Search failed. Please try again.', 'error');
   } finally {
     dispatch({ type: END_LOADING });
   }

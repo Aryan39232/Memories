@@ -65,8 +65,7 @@ const Navbar = () => {
         {user?.result ? (
           <div className={classes.profile}>
             <Avatar component={Link} to="/profile" className={classes.purple} alt={user?.result.name} src={user?.result.imageUrl}>{user?.result.name?.charAt(0)}</Avatar>
-            <Typography className={classes.userName} variant="subtitle1">{user?.result.name}</Typography>
-            <Button variant="outlined" color="secondary" onClick={logout}>Log out</Button>
+            <Typography component={Link} to="/profile" className={classes.userName} variant="subtitle1">{user?.result.name}</Typography>
           </div>
         ) : (
           <Button component={Link} to="/auth" variant="contained" color="primary" disableElevation>Sign in</Button>
