@@ -4,23 +4,25 @@ import { Typography, CircularProgress, Grid, Divider, Paper } from '@material-ui
 import { useDispatch, useSelector } from 'react-redux';
 
 import Post from '../Posts/Post/post';
+import Paginate from '../pagination';
 import { getPostsByCreator, getPostsBySearch } from '../../actions/posts';
 
 const CreatorOrTag = () => {
   const { name } = useParams();
   const dispatch = useDispatch();
-  const { posts, isLoading } = useSelector((state) => state.posts);
+  const { posts, isLoading, numberOfPages } = useSelector((state) => state.posts);
   const location = useLocation();
   const isTag = location.pathname.startsWith('/tags');
+  const page = Number(new URLSearchParams(location.search).get('page')) || 1;
 
   useEffect(() => {
     if (isTag) {
-      dispatch(getPostsBySearch({ tags: name }));
+      dispatch(getPostsBySearch({ tags: name, page }));
     } else {
-      dispatch(getPostsByCreator(name));
+      dispatch(getPostsByCreator(name, page));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, isTag]);
+  }, [name, isTag, page]);
 
   return (
     <div className="mem-rise" style={{ padding: '8px 0 40px' }}>
@@ -37,13 +39,23 @@ const CreatorOrTag = () => {
           <Typography variant="body1" color="textSecondary">No memories match this {isTag ? 'tag' : 'creator'} so far.</Typography>
         </Paper>
       ) : (
-        <Grid container alignItems="stretch" spacing={3}>
-          {posts.map((post) => (
-            <Grid key={post._id} item xs={12} sm={12} md={6} lg={3}>
-              <Post post={post} />
-            </Grid>
-          ))}
-        </Grid>
+        <>
+          <Grid container alignItems="stretch" spacing={3}>
+            {posts.map((post) => (
+              <Grid key={post._id} item xs={12} sm={12} md={6} lg={3}>
+                <Post post={post} />
+              </Grid>
+            ))}
+          </Grid>
+          {numberOfPages > 1 && (
+            <Paper style={{ borderRadius: 18, padding: '20px 0', marginTop: 32 }} elevation={0}>
+              <Paginate
+                page={page}
+                buildUrl={(p) => `${location.pathname}?page=${p}`}
+              />
+            </Paper>
+          )}
+        </>
       )}
     </div>
   );

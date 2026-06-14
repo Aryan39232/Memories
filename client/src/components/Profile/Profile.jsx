@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
-import { Container, Paper, Typography, Avatar, Grow, Divider, Chip, Button } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { Container, Paper, Typography, Avatar, Grow, Divider, Chip, Button, Dialog, DialogContent, DialogTitle, IconButton } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import CloseIcon from '@material-ui/icons/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import * as actionType from '../../constants/actionTypes';
 
 import { getPostsByCreator } from '../../actions/posts';
 import Post from '../Posts/Post/post';
+import Form from '../Forms/Form';
 import useStyles from './styles';
 
 const Profile = () => {
@@ -16,6 +18,9 @@ const Profile = () => {
   const history = useHistory();
   const { posts, isLoading } = useSelector((state) => state.posts);
   const user = JSON.parse(localStorage.getItem('profile'));
+  const [currentId, setCurrentId] = useState(0);
+
+  const handleCloseModal = () => setCurrentId(0);
 
   const logout = () => {
     dispatch({ type: actionType.LOGOUT });
@@ -71,7 +76,7 @@ const Profile = () => {
           </div>
         ) : posts.length ? (
           <div className={classes.grid}>
-            {posts.map((post) => <Post key={post._id} post={post} />)}
+            {posts.map((post) => <Post key={post._id} post={post} setCurrentId={setCurrentId} />)}
           </div>
         ) : (
           <Paper className={classes.empty} elevation={6}>
@@ -81,6 +86,25 @@ const Profile = () => {
             </Typography>
           </Paper>
         )}
+        <Dialog
+          open={currentId !== 0}
+          onClose={handleCloseModal}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{ style: { borderRadius: 18 } }}
+        >
+          <DialogTitle disableTypography style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px 0' }}>
+            <Typography variant="h6" style={{ fontWeight: 700 }}>Edit memory</Typography>
+            <IconButton size="small" onClick={handleCloseModal}><CloseIcon /></IconButton>
+          </DialogTitle>
+          <DialogContent style={{ paddingBottom: 24 }}>
+            <Form
+              currentId={currentId}
+              embedded
+              setCurrentId={(id) => { if (id === 0) handleCloseModal(); else setCurrentId(id); }}
+            />
+          </DialogContent>
+        </Dialog>
       </Container>
     </Grow>
   );

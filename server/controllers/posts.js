@@ -19,7 +19,8 @@ export const getPosts = async (req, res) => {
 };
 
 export const getPostsBySearch = async (req, res) => {
-  const { searchQuery, tags } = req.query;
+  const { searchQuery, tags, page = 1 } = req.query;
+  const LIMIT = 8;
 
   try {
     const tagList = tags ? tags.split(',').filter(Boolean) : [];
@@ -29,23 +30,27 @@ export const getPostsBySearch = async (req, res) => {
     if (hasTitle) orConditions.push({ title: new RegExp(searchQuery, 'i') });
     if (tagList.length) orConditions.push({ tags: { $in: tagList } });
 
-    const posts = orConditions.length
-      ? await PostMessage.find({ $or: orConditions })
-      : await PostMessage.find().sort({ _id: -1 }).limit(20);
+    const query = orConditions.length ? { $or: orConditions } : {};
+    const startIndex = (Number(page) - 1) * LIMIT;
+    const total = await PostMessage.countDocuments(query);
+    const posts = await PostMessage.find(query).sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
 
-    res.json({ data: posts });
+    res.json({ data: posts, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT) });
   } catch (error) {
     res.status(500).json({ message: 'Search failed. Please try again.' });
   }
 };
 
 export const getPostsByCreator = async (req, res) => {
-  const { name } = req.query;
+  const { name, page = 1 } = req.query;
+  const LIMIT = 8;
 
   try {
-    const posts = await PostMessage.find({ name });
+    const startIndex = (Number(page) - 1) * LIMIT;
+    const total = await PostMessage.countDocuments({ name });
+    const posts = await PostMessage.find({ name }).sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
 
-    res.json({ data: posts });
+    res.json({ data: posts, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT) });
   } catch (error) {
     res.status(500).json({ message: 'Could not load these memories. Please try again.' });
   }

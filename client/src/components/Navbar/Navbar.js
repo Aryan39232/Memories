@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Typography, Toolbar, Avatar, Button } from '@material-ui/core';
+import { AppBar, Toolbar, Avatar, Button } from '@material-ui/core';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import decode from 'jwt-decode';
@@ -66,7 +66,6 @@ const Navbar = () => {
         {user?.result ? (
           <div className={classes.profile}>
             <Avatar component={Link} to="/profile" className={classes.purple} alt={user?.result.name} src={user?.result.imageUrl}>{user?.result.name?.charAt(0)}</Avatar>
-            <Typography component={Link} to="/profile" className={classes.userName} variant="subtitle1">{user?.result.name}</Typography>
           </div>
         ) : (
           <Button component={Link} to="/auth" variant="contained" color="primary" disableElevation>Sign in</Button>

@@ -15,7 +15,12 @@ const postsReducer = (state = { isLoading: true, posts: [] }, action) => {
       };
     case FETCH_BY_SEARCH:
     case FETCH_BY_CREATOR:
-      return { ...state, posts: action.payload.data };
+      return {
+        ...state,
+        posts: action.payload.data,
+        currentPage: action.payload.currentPage,
+        numberOfPages: action.payload.numberOfPages,
+      };
     case FETCH_POST:
       return { ...state, post: action.payload.post };
     case LIKE:

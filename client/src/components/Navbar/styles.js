@@ -61,14 +61,6 @@ export default makeStyles((theme) => ({
     gap: 12,
     [theme.breakpoints.down('sm')]: { justifyContent: 'center' },
   },
-  userName: {
-    display: 'flex',
-    alignItems: 'center',
-    fontWeight: 600,
-    textDecoration: 'none',
-    color: 'inherit',
-    '&:hover': { color: theme.palette.primary.main },
-  },
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: theme.palette.primary.main,

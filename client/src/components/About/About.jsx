@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Typography, Button, Paper, Grow } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import LabelOutlinedIcon from '@material-ui/icons/LabelOutlined';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import PauseIcon from '@material-ui/icons/Pause';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 import useStyles from './styles';
+import { onImgError } from '../../utils/placeholder';
 
 const POLAROIDS = [
   { img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=500&q=60', cap: 'Golden hour, again', cls: 'p1' },
@@ -54,7 +53,6 @@ const STATS = [
 const About = () => {
   const classes = useStyles();
   const user = JSON.parse(localStorage.getItem('profile'));
-  const [playing, setPlaying] = useState(true);
 
   return (
     <Grow in>
@@ -86,22 +84,14 @@ const About = () => {
 
           {/* Animated polaroid stack */}
           <div className={classes.stackWrap}>
-            <div className={`${classes.stack} ${playing ? classes.stackPlaying : ''}`} aria-hidden="true">
+            <div className={`${classes.stack} ${classes.stackPlaying}`} aria-hidden="true">
               {POLAROIDS.map((p) => (
-                <div key={p.cap} className={`${classes.polaroid} ${classes[p.cls]} ${playing ? classes[`${p.cls}Anim`] : ''}`}>
-                  <img className={classes.polaroidImg} src={p.img} alt="" />
+                <div key={p.cap} className={`${classes.polaroid} ${classes[p.cls]} ${classes[`${p.cls}Anim`]}`}>
+                  <img className={classes.polaroidImg} src={p.img} alt="" onError={onImgError} />
                   <div className={classes.caption}>{p.cap}</div>
                 </div>
               ))}
             </div>
-            <Button
-              className={classes.playBtn}
-              size="small"
-              startIcon={playing ? <PauseIcon /> : <PlayArrowIcon />}
-              onClick={() => setPlaying((p) => !p)}
-            >
-              {playing ? 'Pause' : 'Play'}
-            </Button>
           </div>
         </section>
 
@@ -142,7 +132,7 @@ const About = () => {
           <div className={classes.memoryGrid}>
             {SAMPLE_MEMORIES.map((m) => (
               <div key={m.title} className={classes.memCard}>
-                <img src={m.img} alt={m.title} className={classes.memImg} />
+                <img src={m.img} alt={m.title} className={classes.memImg} onError={onImgError} />
                 <div className={classes.memBody}>
                   <Typography className={classes.memTitle}>{m.title}</Typography>
                   <Typography variant="caption" color="textSecondary">{m.name}</Typography>

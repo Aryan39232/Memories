@@ -14,7 +14,7 @@ import { useHistory } from 'react-router-dom';
 import { likePost, deletePost } from '../../../actions/posts';
 import useStyles from './styles';
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=60';
+import { FALLBACK_IMG, onImgError } from '../../../utils/placeholder';
 
 const Post = ({ post, setCurrentId }) => {
   const user = JSON.parse(localStorage.getItem('profile'));
@@ -64,7 +64,7 @@ const Post = ({ post, setCurrentId }) => {
     <>
       <Card className={classes.card} raised elevation={6}>
         <ButtonBase component="span" className={classes.cardAction} onClick={() => history.push(`/posts/${post._id}`)}>
-          <CardMedia className={classes.media} image={post.selectedFile || FALLBACK_IMG} title={post.title} />
+          <CardMedia component="img" className={classes.media} src={post.selectedFile || FALLBACK_IMG} alt={post.title} onError={onImgError} />
           <div className={classes.overlay}>
             <Typography variant="h6">{post.name}</Typography>
             <Typography variant="body2">{moment(post.createdAt).fromNow()}</Typography>

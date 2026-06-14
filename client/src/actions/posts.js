@@ -26,11 +26,11 @@ export const getPosts = (page) => async (dispatch) => {
   }
 };
 
-export const getPostsByCreator = (name) => async (dispatch) => {
+export const getPostsByCreator = (name, page) => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
-    const { data: { data } } = await api.fetchPostsByCreator(name);
-    dispatch({ type: FETCH_BY_CREATOR, payload: { data } });
+    const { data: { data, currentPage, numberOfPages } } = await api.fetchPostsByCreator(name, page);
+    dispatch({ type: FETCH_BY_CREATOR, payload: { data, currentPage, numberOfPages } });
   } catch (error) {
     notify('Could not load your memories. Please try again.', 'error');
   } finally {
@@ -41,8 +41,8 @@ export const getPostsByCreator = (name) => async (dispatch) => {
 export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
-    const { data: { data } } = await api.fetchPostsBySearch(searchQuery);
-    dispatch({ type: FETCH_BY_SEARCH, payload: { data } });
+    const { data: { data, currentPage, numberOfPages } } = await api.fetchPostsBySearch(searchQuery);
+    dispatch({ type: FETCH_BY_SEARCH, payload: { data, currentPage, numberOfPages } });
   } catch (error) {
     notify('Search failed. Please try again.', 'error');
   } finally {

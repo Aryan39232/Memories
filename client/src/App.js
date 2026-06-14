@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container } from '@material-ui/core';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect, useLocation } from 'react-router-dom';
 
 import PostDetails from './components/PostDetails/PostDetails';
 import Navbar from './components/Navbar/Navbar';
@@ -16,11 +16,18 @@ import Feedback from './components/Feedback/Feedback';
 import Footer from './components/Footer/Footer';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
 const App = () => {
   const user = JSON.parse(localStorage.getItem('profile'));
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Feedback />
       <Container maxWidth="xl">
         <Navbar />

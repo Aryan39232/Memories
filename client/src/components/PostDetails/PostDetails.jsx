@@ -10,7 +10,7 @@ import { getPost, getPostsBySearch } from '../../actions/posts';
 import CommentSection from './CommentSection';
 import useStyles from './styles';
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=70';
+import { FALLBACK_IMG, onImgError } from '../../utils/placeholder';
 
 const Post = () => {
   const { post, posts, isLoading } = useSelector((state) => state.posts);
@@ -51,7 +51,8 @@ const Post = () => {
     );
   }
 
-  const recommendedPosts = posts.filter(({ _id }) => _id !== post._id);
+  const allRecommended = posts.filter(({ _id }) => _id !== post._id);
+  const recommendedPosts = allRecommended.slice(0, 6);
   const likeCount = post.likes?.length || 0;
 
   return (
@@ -93,20 +94,34 @@ const Post = () => {
           </div>
 
           <div className={classes.imageSection}>
-            <img className={classes.media} src={post.selectedFile || FALLBACK_IMG} alt={post.title} />
+            <img className={classes.media} src={post.selectedFile || FALLBACK_IMG} alt={post.title} onError={onImgError} />
           </div>
         </div>
 
         {!!recommendedPosts.length && (
           <div className={classes.recommended}>
-            <Typography gutterBottom variant="h5">You might also like</Typography>
-            <Divider />
+            <div className={classes.recommendedHeader}>
+              <Typography variant="h6" className={classes.recommendedTitle}>You might also like</Typography>
+              {allRecommended.length > 6 && (
+                <Link
+                  to={post.tags?.length ? `/posts/search?searchQuery=none&tags=${post.tags.join(',')}` : '/posts'}
+                  className={classes.seeAllLink}
+                >
+                  See all
+                </Link>
+              )}
+            </div>
+            <Divider style={{ marginBottom: 20 }} />
             <div className={classes.recommendedPosts}>
               {recommendedPosts.map(({ title, name, likes, selectedFile, _id }) => (
                 <div className={classes.recCard} onClick={() => openPost(_id)} key={_id}>
-                  <img className={classes.recImg} src={selectedFile || FALLBACK_IMG} alt={title} />
-                  <Typography className={classes.recTitle} variant="subtitle1">{title}</Typography>
-                  <Typography variant="caption" color="textSecondary">{name} · {likes.length} {likes.length === 1 ? 'like' : 'likes'}</Typography>
+                  <img className={classes.recImg} src={selectedFile || FALLBACK_IMG} alt={title} onError={onImgError} />
+                  <div className={classes.recContent}>
+                    <Typography className={classes.recTitle} variant="subtitle2">{title}</Typography>
+                    <Typography variant="caption" color="textSecondary">
+                      {name} · {likes.length} {likes.length === 1 ? 'like' : 'likes'}
+                    </Typography>
+                  </div>
                 </div>
               ))}
             </div>

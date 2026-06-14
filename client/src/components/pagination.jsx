@@ -6,27 +6,33 @@ import { Link } from 'react-router-dom';
 import { getPosts } from '../actions/posts';
 import useStyles from './styles';
 
-const Paginate = ({ page }) => {
+const Paginate = ({ page, buildUrl }) => {
   const { numberOfPages } = useSelector((state) => state.posts);
   const dispatch = useDispatch();
 
   const classes = useStyles();
 
   useEffect(() => {
-    if (page) {
+    if (!buildUrl && page) {
       dispatch(getPosts(page));
     }
-  }, [dispatch, page]);
+  }, [dispatch, page, buildUrl]);
 
   return (
     <Pagination
       classes={{ ul: classes.ul }}
-      count={numberOfPages}
+      count={numberOfPages || 1}
       page={Number(page) || 1}
       variant="outlined"
       color="primary"
+      siblingCount={1}
+      boundaryCount={1}
       renderItem={(item) => (
-        <PaginationItem {...item} component={Link} to={`/posts?page=${item.page}`} />
+        <PaginationItem
+          {...item}
+          component={Link}
+          to={buildUrl ? buildUrl(item.page) : `/posts?page=${item.page}`}
+        />
       )}
     />
   );

@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Container, Grow, Grid, Paper, TextField, Button, Typography, Dialog, DialogContent, DialogTitle, IconButton } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation, Link } from 'react-router-dom';
 import ChipInput from 'material-ui-chip-input';
 import AddIcon from '@material-ui/icons/Add';
@@ -30,13 +30,27 @@ const Home = () => {
 
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
+  const { numberOfPages } = useSelector((state) => state.posts);
   const user = JSON.parse(localStorage.getItem('profile'));
   const isSearch = !!searchQuery || !!tags.length;
 
-  const triggerSearch = (q, t) => {
+  // Single source of truth: dispatch whenever the URL's search params change.
+  // This covers: user typing, chip add/delete, "See all" navigation, search pagination,
+  // and direct URL entry — all without double-dispatching.
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const sq = params.get('searchQuery');
+    const t = params.get('tags');
+    const p = Number(params.get('page')) || 1;
+    if (sq || t) {
+      dispatch(getPostsBySearch({ search: sq || 'none', tags: t || '', page: p }));
+    }
+  }, [location.search, dispatch]);
+
+  const triggerSearch = (q, t, p = 1) => {
     if (q.trim() || t.length) {
-      dispatch(getPostsBySearch({ search: q, tags: t.join(',') }));
-      history.push(`/posts/search?searchQuery=${q || 'none'}&tags=${t.join(',')}`);
+      history.push(`/posts/search?searchQuery=${q || 'none'}&tags=${t.join(',')}&page=${p}`);
     } else {
       history.push('/posts');
     }
@@ -169,9 +183,16 @@ const Home = () => {
         <Posts setCurrentId={(id) => { setCurrentId(id); setShowForm(true); }} />
 
         {/* ── Pagination ── */}
-        {!isSearch && (
+        {!isSearch ? (
           <Paper className={classes.pagination} elevation={0}>
             <Pagination page={page} />
+          </Paper>
+        ) : numberOfPages > 1 && (
+          <Paper className={classes.pagination} elevation={0}>
+            <Pagination
+              page={Number(query.get('page')) || 1}
+              buildUrl={(p) => `/posts/search?searchQuery=${query.get('searchQuery') || 'none'}&tags=${query.get('tags') || ''}&page=${p}`}
+            />
           </Paper>
         )}
 
